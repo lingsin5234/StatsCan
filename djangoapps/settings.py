@@ -20,12 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!_%-&ybw#=$9nwb#=2sdosz)fw57@+)8g^t(o=zu164duy&=)_'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -37,6 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # libraries
+    'menu',
+    'django_extensions',
+
+    # apps
+    'econ'
 ]
 
 MIDDLEWARE = [
@@ -73,10 +80,18 @@ WSGI_APPLICATION = 'djangoapps.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASE ROUTERS
+DATABASE_ROUTERS = ['econ.routers.ECONRouter']
+DATABASE_APPS_MAPPING = {'econ': 'econ_db'}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'econ_db': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'econ.sqlite3'),
     }
 }
 
@@ -105,7 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = os.environ.get('TIME_ZONE')
 
 USE_I18N = True
 
@@ -117,4 +132,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+# accessing static in DEVELOPMENT
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
 STATIC_URL = '/static/'
+
+# accessing static in PRODUCTION
+# STATIC_ROOT = 'static'
