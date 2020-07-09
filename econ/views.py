@@ -62,13 +62,24 @@ class CubesAPI(views.APIView):
 
     # get request
     def get(self, request):
+
+        # get Cubes
         queryset = Cubes.objects.values()
         # print(type(queryset), queryset)
         data_output = CubeSerializer(queryset, many=True).data
-        data_output = json.dumps(data_output, default=str)
-        print(data_output)
+        # print(data_output)
 
-        return Response(data_output)
+        # get list of product names
+        names = []
+        for k in data_output:
+            names.append(k['cubeTitleEn'])
+
+        context = {
+            'product_nm': names
+        }
+
+        return render(request, 'partials/list_cubes.html', context)
+        # return Response(data_output)
 
 
 def listCubes(request):

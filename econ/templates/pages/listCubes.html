@@ -3,9 +3,7 @@
         <h1>List Cubes</h1>
     </div><br>
 
-    <div class="d-flex justify-content-center">
-        <p id="listCubes"></p>
-    </div>
+    <div id="listCubes" class="d-flex justify-content-center"></div>
     <br>
 
     <script>
@@ -18,7 +16,7 @@
                 url: getURL,
                 success: function (data) {  // `data` is the return of the `load_teams` view function
                     //console.log(data);
-                    $("#listCubes").text(data);  // replace with the values retrieved
+                    $("#listCubes").html(data);  // replace with the values retrieved
                 }
             });
         };
