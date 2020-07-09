@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from djangoapps.utils import get_this_template
+from rest_framework import views
+from rest_framework.response import Response
+import json
 from econ.models import Cubes
 from econ.oper import fetch_data as fd
+from econ.serializers import CubeSerializer
 
 
 # project page
@@ -26,10 +30,11 @@ def project_markdown(request):
 # run a oper job
 def run_oper(request):
 
-    json_data = fd.getAllCubesList()
+    # json_data = fd.getAllCubesList()
 
     # store into Cubes model
     status = 'SUCCESS'
+    '''
     for i, k in enumerate(json_data):
         try:
             newDict = {
@@ -44,9 +49,32 @@ def run_oper(request):
             print(k['productId'], e)
             status = 'FAILED'
             break
-
+    '''
     context = {
         'status': status
     }
 
     return render(request, 'pages/run_jobs.html', context)
+
+
+# list Cubes
+class CubesAPI(views.APIView):
+
+    # get request
+    def get(self, request):
+        queryset = Cubes.objects.values()
+        # print(type(queryset), queryset)
+        data_output = CubeSerializer(queryset, many=True).data
+        data_output = json.dumps(data_output, default=str)
+        print(data_output)
+
+        return Response(data_output)
+
+
+def listCubes(request):
+
+    context = {
+
+    }
+
+    return render(request, 'pages/listCubes.html', context)

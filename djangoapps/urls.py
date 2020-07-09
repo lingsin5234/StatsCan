@@ -21,5 +21,7 @@ from econ import views as econ_vw
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^$', econ_vw.project_markdown),
-    re_path(r'^runJob', econ_vw.run_oper)
+    re_path(r'^runJob', econ_vw.run_oper),
+    re_path(r'^listCubes', econ_vw.listCubes),
+    re_path(r'api/list_cubes', econ_vw.CubesAPI.as_view(), name='api_list_cubes'),
 ]
