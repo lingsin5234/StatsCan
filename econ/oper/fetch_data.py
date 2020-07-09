@@ -17,12 +17,14 @@ def getAllCubesList():
     with open('all_cubes_list.json', 'w') as outfile:
         json.dump(json_data, outfile, indent=4)
 
+    '''
     # count product IDs
     pid = []
     for i, k in enumerate(json_data):
         pid.append(k['productId'])
+    '''
 
-    return len(pid)
+    return json_data
 
 
-print(getAllCubesList())
+# print(getAllCubesList())

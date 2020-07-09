@@ -20,5 +20,6 @@ from econ import views as econ_vw
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^$', econ_vw.project_markdown)
+    re_path(r'^$', econ_vw.project_markdown),
+    re_path(r'^runJob', econ_vw.run_oper)
 ]

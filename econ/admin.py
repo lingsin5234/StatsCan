@@ -1,3 +1,4 @@
 from django.contrib import admin
+from econ.models import Cubes
 
-# Register your models here.
+admin.site.register(Cubes)
