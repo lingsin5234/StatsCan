@@ -2,3 +2,6 @@
 *__pycache__*
 *static*
 *.sqlite3
+*import*
+*data*
+*download*
