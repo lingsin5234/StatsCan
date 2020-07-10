@@ -63,19 +63,25 @@ class CubesAPI(views.APIView):
     # get request
     def get(self, request):
 
-        # get Cubes
-        queryset = Cubes.objects.values()
-        # print(type(queryset), queryset)
+        # if there is a keyword in the request, isolate queryset for only those objects
+        if 'keyword' in request.GET:
+            # get Cubes with keyword
+            queryset = Cubes.objects.filter(cubeTitleEn__contains=str(request.GET['keyword'])).values()
+        else:
+            # get Cubes
+            queryset = Cubes.objects.values()
         data_output = CubeSerializer(queryset, many=True).data
-        # print(data_output)
 
         # get list of product names
         names = []
+        pid = []
         for k in data_output:
             names.append(k['cubeTitleEn'])
+            pid.append(k['productId'])
 
         context = {
-            'product_nm': names
+            'product_nm': names,
+            'product_id': pid
         }
 
         return render(request, 'partials/list_cubes.html', context)
