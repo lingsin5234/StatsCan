@@ -4,6 +4,7 @@ import requests
 import json
 import wget
 import re
+import pandas as pd
 from zipfile import ZipFile
 
 
@@ -83,5 +84,29 @@ def unzip_download(productId):
     return True
 
 
-getAllCubesList()
+# fetch multiple products
+def multi_product_fetch(file_name):
+
+    # get list of product ids
+    file_path = 'econ/import/' + file_name
+    df = pd.read_csv(file_path, sep=';')
+    productId = list(df['productId'])
+
+    # download the full table for each id
+    for id in productId:
+        try:
+            getFullTableDownloadCSV(id)
+        except Exception as e:
+            pass
+        else:
+            # if download successful, unzip the file
+            unzip_download(id)
+
+    print('Multi-product fetch completed.')
+
+    return True
+
+
+# getAllCubesList()
 # unzip_download(16100017)
+multi_product_fetch('some_farm_ids.csv')
