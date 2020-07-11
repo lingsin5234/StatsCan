@@ -1,8 +1,10 @@
 *.idea*
 *__pycache__*
 *.sqlite3
-static/**
 *import*
 *data*
 *download*
-!static/scripts/
+*admin*
+*fonts*
+*img*
+style.css
