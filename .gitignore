@@ -1,7 +1,8 @@
 *.idea*
 *__pycache__*
-*static*
 *.sqlite3
+static/**
 *import*
 *data*
 *download*
+!static/scripts/
