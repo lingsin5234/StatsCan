@@ -1,0 +1,21 @@
+{% include 'partials/header_econ.html' %}
+    <div id="my_title" class="d-flex justify-content-center">
+        <h1>List Cubes</h1>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <label>Dates: <span id="dateLabel1">10/01/2017</span> - <span id="dateLabel2">19/12/2017</span></label>
+        </div>
+        <div class="col-md-6"></div>
+    </div><br>
+
+    <script>
+        var data = {{ data | safe }};
+        var parseTime = d3.timeParse("%d/%m/%Y");
+        var formatTime = d3.timeFormat("%d/%m/%Y");
+        var transTime = function(){ return d3.transition().duration(100); }
+    </script>
+
+{% include 'partials/footer_econ.html' %}

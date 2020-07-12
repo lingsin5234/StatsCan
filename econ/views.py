@@ -3,9 +3,11 @@ from djangoapps.utils import get_this_template
 from rest_framework import views
 from rest_framework.response import Response
 import json
+import pandas as pd
 from econ.models import Cubes
 from econ.oper import fetch_data as fd
 from econ.serializers import CubeSerializer
+from econ.oper import shape_data as sd
 
 
 # project page
@@ -95,3 +97,25 @@ def listCubes(request):
     }
 
     return render(request, 'pages/listCubes.html', context)
+
+
+def plotMilkProducts(request):
+
+    # get df and convert date column to YYYY-MM-DD (use first day)
+    df = sd.shapeProduct(32100111)
+    df['REF_DATE'] = pd.to_datetime(df['REF_DATE'] + '-01', format='%Y-%m-%d', errors='coerce')
+    # print(df)
+
+    # convert value of measurement, then drop SCALAR_ID and VALUE
+    df['value'] = 10**df['SCALAR_ID'] * df['VALUE']
+    df.drop(['SCALAR_ID', 'VALUE'], axis=1, inplace=True)
+
+    # convert json
+    json_data = df.to_json(orient='records')
+    # print(json_data)
+
+    context = {
+        'data': json_data
+    }
+
+    return render(request, 'pages/plot_milk_products.html', context)

@@ -24,4 +24,5 @@ urlpatterns = [
     re_path(r'^runJob', econ_vw.run_oper),
     re_path(r'^listCubes', econ_vw.listCubes),
     re_path(r'api/list_cubes', econ_vw.CubesAPI.as_view(), name='api_list_cubes'),
+    re_path(r'plot/milk_products', econ_vw.plotMilkProducts)
 ]
