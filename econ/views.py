@@ -103,19 +103,25 @@ def plotMilkProducts(request):
 
     # get df and convert date column to YYYY-MM-DD (use first day)
     df = sd.shapeProduct(32100111)
+    # df['REF_DATE'] = df['REF_DATE'] + '-01'
     df['REF_DATE'] = pd.to_datetime(df['REF_DATE'] + '-01', format='%Y-%m-%d', errors='coerce')
+    df.rename(columns={'REF_DATE': 'date'}, inplace=True)
     # print(df)
 
     # convert value of measurement, then drop SCALAR_ID and VALUE
     df['value'] = 10**df['SCALAR_ID'] * df['VALUE']
     df.drop(['SCALAR_ID', 'VALUE'], axis=1, inplace=True)
 
+    # commodities
+    commodities = list(df['Commodity'].unique())
+
     # convert json
     json_data = df.to_json(orient='records')
     # print(json_data)
 
     context = {
-        'data': json_data
+        'data': json_data,
+        'commodities': commodities
     }
 
     return render(request, 'pages/plot_milk_products.html', context)

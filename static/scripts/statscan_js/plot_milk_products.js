@@ -6,11 +6,11 @@
 */
 
 // constructor function
-StackedArea = function(_parentElement, _svgHeight, _svgWidth, _commodity) {
+StackedArea = function(_parentElement, _svgHeight, _svgWidth, _Commodity) {
     this.parentElement = _parentElement;
     this.svgHeight = _svgHeight;
     this.svgWidth = _svgWidth;
-    this.commodity = _commodity;
+    this.Commodity = _Commodity;
 
     this.initVis();
 }
@@ -51,7 +51,7 @@ StackedArea.prototype.initVis = function() {
 
     // Stack - set the keys here.
     vis.stack = d3.stack()
-        .keys(vis.commodity);
+        .keys(vis.Commodity);
 
     // Add Legend
     vis.legendGroup = vis.svg.append("g")
@@ -59,7 +59,7 @@ StackedArea.prototype.initVis = function() {
         .attr("transform", "translate(" + (vis.margin.left * 2) + " " + vis.margin.top/2 + ")");
     vis.sizes = ["small", "medium", "large"];
     vis.legend = vis.legendGroup.selectAll("g")
-        .data(vis.commodity).enter();
+        .data(vis.Commodity).enter();
 
     vis.legendBox = vis.legend.append("g")
         .attr("transform", function(d,i) {
@@ -94,13 +94,15 @@ StackedArea.prototype.wrangleData = function() {
     // filter the dates, then map with date as key along with the variable value from all 4 teams
     vis.data = d3.nest()
         .key(function(d){ return formatTime(d.date); })
-        .entries(allCalls.filter(function(d) {
+        .entries(productData.filter(function(d) {
+            console.log(formatTime(d.date), vis.date1, vis.date2)
             return (d.date >= vis.date1 && d.date <= vis.date2);
-        })).map(function(d) {
+        }))
+        /*.map(function(d) {
             return d.values.reduce(function(accumulator, current){
                 accumulator.date = d.key
                 // for EACH fo the teams, add the yVariable
-                accumulator[current.team] = accumulator[current.team] + current[vis.yVariable]
+                accumulator[current.Commodity] = accumulator[current.Commodity]
                 return accumulator;
             }, {
                 // pass these to the function so that we only worry about "TEAMS" and not all variables
@@ -109,9 +111,9 @@ StackedArea.prototype.wrangleData = function() {
                 "south": 0,
                 "west": 0
             })
-        })
+        })*/
     //console.log(allCalls);
-    //console.log(vis.data);
+    console.log(vis.data);
 
     vis.updateVis();
 }
