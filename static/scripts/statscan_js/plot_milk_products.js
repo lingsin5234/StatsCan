@@ -6,17 +6,17 @@
 */
 
 // constructor function
-StackedArea = function(_parentElement, _svgHeight, _svgWidth, _Commodity) {
+StackedBar = function(_parentElement, _svgHeight, _svgWidth, _GEO) {
     this.parentElement = _parentElement;
     this.svgHeight = _svgHeight;
     this.svgWidth = _svgWidth;
-    this.Commodity = _Commodity;
+    this.GEO = _GEO;
 
     this.initVis();
 }
 
 // initialize
-StackedArea.prototype.initVis = function() {
+StackedBar.prototype.initVis = function() {
     var vis = this;
 
     vis.margin = {top: 80, right: 70, bottom: 30, left: 70};
@@ -51,7 +51,7 @@ StackedArea.prototype.initVis = function() {
 
     // Stack - set the keys here.
     vis.stack = d3.stack()
-        .keys(vis.Commodity);
+        .keys(vis.GEO);
 
     // Add Legend
     vis.legendGroup = vis.svg.append("g")
@@ -59,7 +59,7 @@ StackedArea.prototype.initVis = function() {
         .attr("transform", "translate(" + (vis.margin.left * 2) + " " + vis.margin.top/2 + ")");
     vis.sizes = ["small", "medium", "large"];
     vis.legend = vis.legendGroup.selectAll("g")
-        .data(vis.Commodity).enter();
+        .data(vis.GEO).enter();
 
     vis.legendBox = vis.legend.append("g")
         .attr("transform", function(d,i) {
@@ -83,7 +83,7 @@ StackedArea.prototype.initVis = function() {
 }
 
 // wrangle data
-StackedArea.prototype.wrangleData = function() {
+StackedBar.prototype.wrangleData = function() {
     var vis = this;
 
     vis.date1 = parseTime($("#dateLabel1").text());
@@ -95,14 +95,14 @@ StackedArea.prototype.wrangleData = function() {
     vis.data = d3.nest()
         .key(function(d){ return formatTime(d.date); })
         .entries(productData.filter(function(d) {
-            console.log(formatTime(d.date), vis.date1, vis.date2)
-            return (d.date >= vis.date1 && d.date <= vis.date2);
+            //console.log(formatTime(d.date), vis.date1, vis.date2)
+            return (d.date >= vis.date1 && d.date <= vis.date2 && d.GEO != 'Canada');
         }))
         /*.map(function(d) {
             return d.values.reduce(function(accumulator, current){
                 accumulator.date = d.key
                 // for EACH fo the teams, add the yVariable
-                accumulator[current.Commodity] = accumulator[current.Commodity]
+                accumulator[current.GEO] = accumulator[current.GEO]
                 return accumulator;
             }, {
                 // pass these to the function so that we only worry about "TEAMS" and not all variables
@@ -119,7 +119,7 @@ StackedArea.prototype.wrangleData = function() {
 }
 
 // update visualization
-StackedArea.prototype.updateVis = function() {
+StackedBar.prototype.updateVis = function() {
     var vis = this;
 
     // Set Domains and Axes

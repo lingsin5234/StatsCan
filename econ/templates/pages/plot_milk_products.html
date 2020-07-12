@@ -13,7 +13,7 @@
 
     <div class="d-flex justify-content-center">
         <div class="col-md-2"></div>
-        <div id="stacked-area" class="col-md-8"></div>
+        <div id="stacked-bar" class="col-md-8"></div>
         <div class="col-md-2"></div>
     </div>
 
@@ -23,17 +23,18 @@
     <script>
         var productData = {{ data | safe }};
         var commodities = {{ commodities | safe }};
+        var geo = {{ geo | safe }};
         var parseTime = d3.timeParse("%d/%m/%Y");
         var formatTime = d3.timeFormat("%d/%m/%Y");
         var transTime = function(){ return d3.transition().duration(100); }
-        var stackedArea;
+        var stackedBar;
 
         // capitalize First Letter
         function capitalizeFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
-        stackedArea = new StackedArea("#stacked-area", 700, 1000, commodities);
+        stackedBar = new StackedBar("#stacked-bar", 700, 1000, geo);
     </script>
 
 {% include 'partials/footer_econ.html' %}

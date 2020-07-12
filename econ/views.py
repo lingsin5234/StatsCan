@@ -115,13 +115,17 @@ def plotMilkProducts(request):
     # commodities
     commodities = list(df['Commodity'].unique())
 
+    # GEOs
+    geo = list(df['GEO'].unique())
+
     # convert json
     json_data = df.to_json(orient='records')
     # print(json_data)
 
     context = {
         'data': json_data,
-        'commodities': commodities
+        'commodities': commodities,
+        'geo': geo
     }
 
     return render(request, 'pages/plot_milk_products.html', context)
