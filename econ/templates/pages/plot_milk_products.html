@@ -21,6 +21,7 @@
     {% load static %}
     <script src="{% static 'scripts/statscan_js/plot_milk_products.js' %}"></script>
     <script>
+        var commData = {{ data2 | safe }};
         var productData = {{ data | safe }};
         var commodities = {{ commodities | safe }};
         var geo = {{ geo | safe }};
@@ -28,6 +29,28 @@
         var formatTime = d3.timeFormat("%d/%m/%Y");
         var transTime = function(){ return d3.transition().duration(100); }
         var stackedBar;
+
+        var date1 = parseTime($("#dateLabel1").text());
+        var date2 = parseTime($("#dateLabel2").text());
+        var selectedCommodity = "Wheybutter";
+        var commodityData = d3.nest()
+            .key(function(d){ return d.Commodity.replace(/ /g, ''); })
+            .entries(productData.filter(function(d) {
+                return (d.date >= date1 && d.date <= date2 && d.GEO != 'Canada');
+            }));
+
+        function selectData() {
+            for (i=0; i < commodityData.length; i++) {
+                if (commodityData[i]['key'] === selectedCommodity) {
+                    //console.log("HELLO", commodityData[i]['values']);
+                    return commodityData[i]['values'];
+                }
+            }
+        }
+
+        selectedData2 = JSON.parse(commData['Whey butter']);
+        selectedData = selectData();
+        //console.log('selectedData', selectedData2);
 
         // capitalize First Letter
         function capitalizeFirstLetter(string) {

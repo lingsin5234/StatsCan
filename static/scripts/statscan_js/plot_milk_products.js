@@ -31,8 +31,9 @@ StackedBar.prototype.initVis = function() {
     vis.g = vis.svg.append('g')
         .attr('transform', 'translate(' + vis.margin.left + ' ' + vis.margin.top + ')');
 
-    // X Axis
-    vis.x = d3.scaleTime()
+    // X Axis -- not scaleTime since we are not plotting continuous
+    vis.x = d3.scaleBand()
+        .padding([0.2])
         .range([0, vis.width]);
 
     vis.xAxisCall = d3.axisBottom().ticks(5);
@@ -91,29 +92,50 @@ StackedBar.prototype.wrangleData = function() {
     //vis.yVariable = $("#var-select-proj4").val();
     //console.log(vis.date1, vis.date2, vis.yVariable)
 
-    // filter the dates, then map with date as key along with the variable value from all 4 teams
-    vis.data = d3.nest()
+    // filter the dates, then map each GEO's value, as individual key-val pairs
+    // due to the conversion between python to_json and formatTime, the date used is end of the month?!!?
+    /*vis.data = {}
+    vis.byDate = d3.nest()
         .key(function(d){ return formatTime(d.date); })
-        .entries(productData.filter(function(d) {
-            //console.log(formatTime(d.date), vis.date1, vis.date2)
-            return (d.date >= vis.date1 && d.date <= vis.date2 && d.GEO != 'Canada');
-        }))
-        /*.map(function(d) {
-            return d.values.reduce(function(accumulator, current){
-                accumulator.date = d.key
-                // for EACH fo the teams, add the yVariable
-                accumulator[current.GEO] = accumulator[current.GEO]
-                return accumulator;
-            }, {
-                // pass these to the function so that we only worry about "TEAMS" and not all variables
-                "northeast": 0,
-                "midwest": 0,
-                "south": 0,
-                "west": 0
-            })
-        })*/
-    //console.log(allCalls);
-    console.log(vis.data);
+        .entries(selectedData.filter(function(d) {
+            return d;
+        }));
+    for (var eachDate in vis.byDate) {
+        //console.log(vis.byDate[eachDate].values);
+        vis.data[vis.byDate[eachDate].key] = vis.byDate[eachDate].values.map(function(d) {
+            //console.log(d)
+            return {
+                GEO: d.GEO,
+                value: d.value
+            };
+        })
+    }*/
+    vis.data = selectedData2.filter(function(d) {
+        //console.log('filter', d);
+        return d.date <= 1083020800000;
+    });
+    console.log('json', vis.data);
+    // fix pre-processing
+    vis.keys = [];
+    for (key in vis.data[0]){
+        if (key != "date")
+        vis.keys.push(key);
+    }
+    console.log('GEOs', vis.keys);
+    vis.data.forEach(function(d){
+        d.total = 0;
+        vis.keys.forEach(function(k){
+            d.total += d[k];
+        })
+    });
+    /*vis.data.sort(function(a, b) {
+        return b.total - a.total;
+    });*/
+    console.log('VIS.DATA', vis.data);
+
+    // get dates
+    /*vis.dates = Object.keys(vis.data);
+    console.log(vis.dates);*/
 
     vis.updateVis();
 }
@@ -123,14 +145,9 @@ StackedBar.prototype.updateVis = function() {
     var vis = this;
 
     // Set Domains and Axes
-    vis.x.domain(d3.extent(vis.data, function(d) { return parseTime(d.date); }));
-    vis.y.domain([0, d3.max(vis.data, function(d) {
-        // get arrays of totals -- excluding "date"
-        var vals = d3.keys(d).map(function(key) { return key !== 'date' ? d[key] : 0  })
-        //console.log(vals);
-        // then add them up, and d3.max will find the max
-        return d3.sum(vals);
-    }) * 1.005]);
+    vis.x.domain(vis.data.map(function(d) { return formatTime(d.date); }));
+    vis.y.domain([0, d3.max(vis.data, function(d) { return d.total; }) * 1.005]).nice();
+    vis.colour.domain(vis.keys);
 
     vis.xAxisCall.scale(vis.x);
     vis.yAxisCall.scale(vis.y);
@@ -139,29 +156,48 @@ StackedBar.prototype.updateVis = function() {
     vis.xAxis.selectAll("text").attr("font-size", "15px");
     vis.yAxis.selectAll("text").attr("font-size", "15px");
 
-    // Area
-    vis.area = d3.area()
-        .x(function(d) { return vis.x(parseTime(d.data.date)); })
-        .y0(function(d) { return vis.y(d[0]); })
-        .y1(function(d) { return vis.y(d[1]); });
+    //stack the data? --> stack per subgroup
+    vis.stackedData = d3.stack()
+        .keys(vis.keys)
+        (vis.data)
+    console.log('STACK', vis.stackedData);
 
-    // use the vis.stack to sort data by the teams (keys)
-    vis.teams = vis.g.selectAll(".team")
-        .data(vis.stack(vis.data));
-
-    // Update the path for each team
-    vis.teams.select(".area")
-        .attr("d", vis.area)
-
-    //console.log(vis.area);
-    // append each group (path area) for each team
-    vis.teams.enter().append("g")
-        .attr("class", function(d){ return "team " + d.key })
-        .append("path")
-            .attr("class", "area")
-            .attr("d", vis.area)
-            .style("fill", function(d){
-                return vis.colour(d.key)
+    vis.g.append("g")
+        .selectAll("g")
+        .data(vis.stackedData)
+        .enter().append("g")
+            .attr("fill", function(d) { return vis.colour(d.key); })
+            .selectAll("rect")
+            .data(function(d) {
+                //console.log('data', d);
+                return d;
             })
-            .style("fill-opacity", 0.9)
+            .enter().append("rect")
+                .attr("x", function(d) {
+                    return vis.x(formatTime(d.data.date));
+                })
+                .attr("y", function(d) {
+                    return vis.y(d[1]);
+                })
+                .attr("height", function(d) {
+                    return vis.y(d[0]) - vis.y(d[1]);
+                })
+                .attr("width", vis.x.bandwidth())
+
+    /*
+    // Show the bars
+    svg.append("g")
+        .selectAll("g")
+        // Enter in the stack data = loop key per key = group per group
+        .data(vis.data)
+        .enter().append("g")
+        .attr("fill", function(d) { return color(d.data.GEO); })
+        .selectAll("rect")
+            // enter a second time = loop subgroup per subgroup to add all rectangles
+            .data(function(d) { return d; })
+            .enter().append("rect")
+            .attr("x", function(d) { return x(d.data.group); })
+            .attr("y", function(d) { return y(d[1]); })
+            .attr("height", function(d) { return y(d[0]) - y(d[1]); })
+            .attr("width",x.bandwidth())*/
 }

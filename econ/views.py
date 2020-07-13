@@ -118,12 +118,23 @@ def plotMilkProducts(request):
     # GEOs
     geo = list(df['GEO'].unique())
 
+    # reshape this table to list date vs province totals
+    reshape_df = {}
+    for c in commodities:
+        new_df = df[df['Commodity'] == c].copy()
+        new_df = new_df.pivot(index='date', columns='GEO', values='value', )
+        new_df.fillna(0, inplace=True)
+        new_df.reset_index(inplace=True)
+        print(new_df.head())
+        reshape_df[c] = new_df.to_json(orient='records', date_format='epoch')
+
     # convert json
-    json_data = df.to_json(orient='records')
+    json_data = df.to_json(orient='records', date_format='epoch')
     # print(json_data)
 
     context = {
         'data': json_data,
+        'data2': reshape_df,
         'commodities': commodities,
         'geo': geo
     }
