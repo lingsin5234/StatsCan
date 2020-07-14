@@ -19,11 +19,11 @@ StackedBar = function(_parentElement, _svgHeight, _svgWidth, _GEO) {
 StackedBar.prototype.initVis = function() {
     var vis = this;
 
-    vis.margin = {top: 50, right: 210, bottom: 50, left: 70};
+    vis.margin = {top: 70, right: 210, bottom: 70, left: 70};
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
-    vis.colour = d3.scaleOrdinal(d3.schemePastel1);
+    vis.colour = d3.scaleOrdinal(d3.schemeCategory10);
 
     vis.svg = d3.select(vis.parentElement).append('svg')
         .attr('height', vis.svgHeight).attr('width', vis.svgWidth);
@@ -86,6 +86,7 @@ StackedBar.prototype.wrangleData = function() {
 
     vis.date1 = parseTime($("#dateLabel1").text());
     vis.date2 = parseTime($("#dateLabel2").text());
+    vis.Commodity = selectedCommodity;
 
     // filter by date
     vis.data = selectedData2.filter(function(d) {
@@ -136,18 +137,26 @@ StackedBar.prototype.updateVis = function() {
 
     // Set Axes Names
     vis.g.append("g")
-        .attr("transform", "translate(" + vis.width/2 + " " + (vis.height + vis.margin.bottom/4*3) + ")")
+        .attr("transform", "translate(" + (vis.width/2 - vis.margin.left/2) + " " + (vis.height + vis.margin.bottom/4*3) + ")")
         .append("text")
             .attr("font-size", "20px")
             .style("fill", "#222D8F")
             .text("Date");
     vis.g.append("g")
-        .attr("transform", "translate(" + -vis.margin.left/4*3 + " " + vis.height/2 + ")")
+        .attr("transform", "translate(" + (-vis.margin.left + 15) + " " + vis.height/2 + ")")
         .append("text")
             .attr("transform", "rotate(-90)")
             .attr("font-size", "20px")
             .style("fill", "#222D8F")
             .text(vis.uom);
+
+    // Set Title
+    vis.g.append("g")
+        .attr("transform", "translate(" + (vis.width/2 - vis.margin.left) + " " + -25 + ")")
+        .append("text")
+            .attr("font-size", "30px")
+            .style("fill", "#222D8F")
+            .text(vis.Commodity)
 
     //stack the data? --> stack per subgroup
     vis.stackedData = d3.stack()

@@ -29,7 +29,8 @@
         var transTime = function(){ return d3.transition().duration(100); }
         var stackedBar;
 
-        var selectedData2 = JSON.parse(commData['Creamery butter']);
+        var selectedCommodity = 'Creamery butter';
+        var selectedData2 = JSON.parse(commData[selectedCommodity]);
 
         // capitalize First Letter
         function capitalizeFirstLetter(string) {
