@@ -123,6 +123,11 @@ def plotMilkProducts(request):
         new_df.fillna(0, inplace=True)
         new_df.reset_index(inplace=True)
         # print(new_df.head())
+
+        # add UOM column
+        new_df['UOM'] = list(df.loc[df['Commodity'] == c, 'UOM'])[0]
+
+        # write to json
         reshape_df[c] = new_df.to_json(orient='records', date_format='epoch')
 
     # GEOs

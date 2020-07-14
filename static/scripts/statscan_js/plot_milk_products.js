@@ -19,7 +19,7 @@ StackedBar = function(_parentElement, _svgHeight, _svgWidth, _GEO) {
 StackedBar.prototype.initVis = function() {
     var vis = this;
 
-    vis.margin = {top: 30, right: 210, bottom: 30, left: 70};
+    vis.margin = {top: 50, right: 210, bottom: 50, left: 70};
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
@@ -72,6 +72,7 @@ StackedBar.prototype.initVis = function() {
     vis.legendBox.append("text")
         .attr("text-anchor", "start")
         .attr("font-size", "15px")
+        .style("fill", "#222D8F")
         .attr("x", 15).attr("y", 10)
         .text(function(d) { return capitalizeFirstLetter(d); });
 
@@ -86,15 +87,20 @@ StackedBar.prototype.wrangleData = function() {
     vis.date1 = parseTime($("#dateLabel1").text());
     vis.date2 = parseTime($("#dateLabel2").text());
 
+    // filter by date
     vis.data = selectedData2.filter(function(d) {
         //console.log('filter', d);
         return d.date >= 83020800000;
     });
-    //console.log('json', vis.data);
+
+    // unit of measure
+    vis.uom = vis.data[0]['UOM']
+    //console.log(vis.uom);
+
     // fix pre-processing
     vis.keys = [];
     for (key in vis.data[0]){
-        if (key != "date")
+        if (key != "date" && key != "UOM")
         vis.keys.push(key);
     }
     //console.log('GEOs', vis.keys);
@@ -115,8 +121,8 @@ StackedBar.prototype.updateVis = function() {
 
     // Set Domains and Axes
     vis.x.domain([
-        d3.min(vis.data, function(d) { return d3.timeDay.offset(d.date, -15); }),
-        d3.max(vis.data, function(d) { return d3.timeDay.offset(d.date, 45); })
+        d3.min(vis.data, function(d) { return d3.timeDay.offset(d.date, -30); }),
+        d3.max(vis.data, function(d) { return d3.timeDay.offset(d.date, 15); })
     ])
     vis.y.domain([0, d3.max(vis.data, function(d) { return d.total; }) * 1.005]).nice();
     vis.colour.domain(vis.keys);
@@ -127,6 +133,21 @@ StackedBar.prototype.updateVis = function() {
     vis.yAxis.transition(transTime).call(vis.yAxisCall);
     vis.xAxis.selectAll("text").attr("font-size", "15px");
     vis.yAxis.selectAll("text").attr("font-size", "15px");
+
+    // Set Axes Names
+    vis.g.append("g")
+        .attr("transform", "translate(" + vis.width/2 + " " + (vis.height + vis.margin.bottom/4*3) + ")")
+        .append("text")
+            .attr("font-size", "20px")
+            .style("fill", "#222D8F")
+            .text("Date");
+    vis.g.append("g")
+        .attr("transform", "translate(" + -vis.margin.left/4*3 + " " + vis.height/2 + ")")
+        .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("font-size", "20px")
+            .style("fill", "#222D8F")
+            .text(vis.uom);
 
     //stack the data? --> stack per subgroup
     vis.stackedData = d3.stack()
@@ -147,7 +168,7 @@ StackedBar.prototype.updateVis = function() {
             .enter().append("rect")
                 .attr("x", function(d) {
                     //console.log(d3.timeDay.offset(d.data.date, -25))
-                    return vis.x(d3.timeDay.offset(d.data.date, 15));
+                    return vis.x(d3.timeDay.offset(d.data.date, -15));
                 })
                 .attr("y", function(d) {
                     return vis.y(d[1]);
@@ -156,23 +177,7 @@ StackedBar.prototype.updateVis = function() {
                     return vis.y(d[0]) - vis.y(d[1]);
                 })
                 .attr("width", function(d) {
-                    return vis.x(d3.timeDay.offset(d.data.date, 25)) - vis.x(d.data.date);
+                    return vis.x(d.data.date) - vis.x(d3.timeDay.offset(d.data.date, -25));
                 });
 
-    /*
-    // Show the bars
-    svg.append("g")
-        .selectAll("g")
-        // Enter in the stack data = loop key per key = group per group
-        .data(vis.data)
-        .enter().append("g")
-        .attr("fill", function(d) { return color(d.data.GEO); })
-        .selectAll("rect")
-            // enter a second time = loop subgroup per subgroup to add all rectangles
-            .data(function(d) { return d; })
-            .enter().append("rect")
-            .attr("x", function(d) { return x(d.data.group); })
-            .attr("y", function(d) { return y(d[1]); })
-            .attr("height", function(d) { return y(d[0]) - y(d[1]); })
-            .attr("width",x.bandwidth())*/
 }
