@@ -35,7 +35,7 @@ StackedBar.prototype.initVis = function() {
 
     // X Axis
     vis.x = d3.scaleBand()
-        .padding([0.02])
+        .padding([0.05])
         .range([0, vis.width]);
 
     vis.xAxisCall = d3.axisBottom()
@@ -55,7 +55,7 @@ StackedBar.prototype.initVis = function() {
     // Add Legend
     vis.legendGroup = vis.svg.append("g")
         .attr("class", "legend")
-        .attr("transform", "translate(" + (vis.margin.left * 1.5) + " " + vis.margin.top/2 + ")");
+        .attr("transform", "translate(" + (vis.margin.left * 1.1) + " " + vis.margin.top/2 + ")");
     vis.sizes = ["small", "medium", "large"];
     vis.legend = vis.legendGroup.selectAll("g")
         .data(vis.GEO).enter();
@@ -79,6 +79,31 @@ StackedBar.prototype.initVis = function() {
         .attr("x", 15).attr("y", 10)
         .text(function(d) { return capitalizeFirstLetter(d); });
 
+    // Create Tooltip
+    vis.tooltip = d3.tip().attr('class', 'd3-tip').direction('e').offset([0,5])
+        .html(function(d) {
+            // get year, GEO and height (value)
+            var thisYear = d.data.date
+            var thisGEO = '';
+            var GEOvalue = 0;
+            for (var key in d.data) {
+                var barHeight = d[1] - d[0];
+                if (d.data[key] == barHeight && key != 'total') {
+                    //console.log('key', key)
+                    thisGEO = key;
+                    GEOvalue = d.data[key];
+                }
+            }
+            // formulate content
+            var content = "<span style='margin-left: 2.5px;'><b>" + thisGEO + " " + thisYear + "</b></span><br>";
+            content +=`
+                <table style="margin-top: 2.5px;">
+                    <tr><td>` + d3.format(",.0f")(GEOvalue) + ` kilotonnes</td></tr>
+                </table>
+                `;
+            return content;
+        });
+    vis.svg.call(vis.tooltip);
 
     vis.wrangleData();
 }
@@ -167,10 +192,12 @@ StackedBar.prototype.updateVis = function() {
     vis.stackedData = d3.stack()
         .keys(vis.keys)
         (vis.data)
-    console.log('STACK', vis.stackedData);
+    //console.log('STACK', vis.stackedData);
 
-    vis.g.append("g")
-        .selectAll("g")
+    vis.barChart = vis.g.append("g")
+        .attr("class", "bar-chart");
+
+    vis.barChart.selectAll("g")
         .data(vis.stackedData)
         .enter().append("g")
             .attr("fill", function(d) { return vis.colour(d.key); })
@@ -189,5 +216,9 @@ StackedBar.prototype.updateVis = function() {
                 .attr("height", function(d) {
                     return vis.y(d[0]) - vis.y(d[1]);
                 })
-                .attr("width", 10);
+                .attr("width", 20)
+                // tooltip
+                .on("mouseover", function(d, i) { vis.tooltip.show(d, this); })
+                .on("mouseout", function(d, i) { vis.tooltip.hide(d, this); });
+
 }
