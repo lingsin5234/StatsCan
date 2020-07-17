@@ -110,4 +110,5 @@ def multi_product_fetch(file_name):
 # getAllCubesList()
 # unzip_download(16100017)
 # multi_product_fetch('some_farm_ids.csv')
-multi_product_fetch('fruits_veggies_ids.csv')
+# multi_product_fetch('fruits_veggies_ids.csv')
+# multi_product_fetch('greenhouse_ids.csv')
