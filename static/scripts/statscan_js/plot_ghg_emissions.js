@@ -19,11 +19,13 @@ StackedBar = function(_parentElement, _svgHeight, _svgWidth, _GEO) {
 StackedBar.prototype.initVis = function() {
     var vis = this;
 
-    vis.margin = {top: 70, right: 210, bottom: 70, left: 100};
+    vis.margin = {top: 70, right: 270, bottom: 70, left: 100};
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
-    vis.colour = d3.scaleOrdinal(d3.schemePaired);
+    vis.colour = d3.scaleOrdinal()
+        .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628',
+        '#f781bf', '#999999', '#990000', '#003366', '#028482', '#d4Af37', '#333333']);
 
     vis.svg = d3.select(vis.parentElement).append('svg')
         .attr('height', vis.svgHeight).attr('width', vis.svgWidth);
@@ -72,8 +74,8 @@ StackedBar.prototype.initVis = function() {
     vis.legendBox.append("text")
         .attr("text-anchor", "start")
         .attr("font-size", "15px")
-        .style("fill", "#FFF")
-        //.style("fill", "#222D8F")
+        //.style("fill", "#FFF")
+        .style("fill", "#222D8F")
         .attr("x", 15).attr("y", 10)
         .text(function(d) { return capitalizeFirstLetter(d); });
 
@@ -122,7 +124,7 @@ StackedBar.prototype.updateVis = function() {
     // Set Domains and Axes
     vis.x.domain(vis.data.map(function(d) { return d.date; }))
     vis.y.domain([0, d3.max(vis.data, function(d) { return d.total; }) * 1.005]).nice();
-    vis.colour.domain(vis.keys);
+    vis.colour.domain(vis.GEO);
 
     vis.xAxisCall.scale(vis.x)
         .tickValues(vis.x.domain().filter(function(d,i){
@@ -140,16 +142,16 @@ StackedBar.prototype.updateVis = function() {
         .attr("transform", "translate(" + (vis.width/2 - vis.margin.left/2) + " " + (vis.height + vis.margin.bottom/4*3) + ")")
         .append("text")
             .attr("font-size", "20px")
-            .style("fill", "#FFF")
-            //.style("fill", "#222D8F")
+            //.style("fill", "#FFF")
+            .style("fill", "#222D8F")
             .text("Year");
     vis.g.append("g")
         .attr("transform", "translate(" + (-vis.margin.left + 15) + " " + vis.height/2 + ")")
         .append("text")
             .attr("transform", "rotate(-90)")
             .attr("font-size", "20px")
-            .style("fill", "#FFF")
-            //.style("fill", "#222D8F")
+            //.style("fill", "#FFF")
+            .style("fill", "#222D8F")
             .text(vis.uom);
 
     // Set Title
@@ -157,8 +159,8 @@ StackedBar.prototype.updateVis = function() {
         .attr("transform", "translate(" + (vis.width/4 - vis.margin.left) + " " + -25 + ")")
         .append("text")
             .attr("font-size", "30px")
-            .style("fill", "#FFF")
-            //.style("fill", "#222D8F")
+            //.style("fill", "#FFF")
+            .style("fill", "#222D8F")
             .text('Total GreenHouse Gas Emissions By Province')
 
     //stack the data? --> stack per subgroup

@@ -170,7 +170,7 @@ def plotGHGEmissions(request):
     # reorder GEO with Canada at the front, then the rest by alphabetical
     new_geo = ['Canada']
     new_geo.extend(sorted(geo))
-    print('GEO:', new_geo)
+    # print('GEO:', new_geo)
 
     # Sectors
     sector = df['Sector'].unique()
@@ -194,7 +194,7 @@ def plotGHGEmissions(request):
     # concat back to the new_df and sort by year and sector again
     new_df = pd.concat([new_df, totals_df])
     new_df = new_df.sort_values(by=['date', 'Sector'])
-    # print('With Grand Total:', new_df.head())
+    print('With Grand Total:', new_df.head())
 
     # write to json
     reshape_df = new_df.to_json(orient='records')
