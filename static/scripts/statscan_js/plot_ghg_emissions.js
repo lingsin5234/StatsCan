@@ -123,7 +123,11 @@ StackedBar.prototype.updateVis = function() {
     vis.y.domain([0, d3.max(vis.data, function(d) { return d.total; }) * 1.005]).nice();
     vis.colour.domain(vis.keys);
 
-    vis.xAxisCall.scale(vis.x);
+    vis.xAxisCall.scale(vis.x)
+        .tickValues(vis.x.domain().filter(function(d,i){
+            // one shown tick per 5 ticks
+            return !(i%5)
+        }));;
     vis.yAxisCall.scale(vis.y);
     vis.xAxis.transition(transTime).call(vis.xAxisCall);
     vis.yAxis.transition(transTime).call(vis.yAxisCall);
