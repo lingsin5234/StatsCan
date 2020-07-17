@@ -165,8 +165,12 @@ def plotGHGEmissions(request):
 
     # GEOs
     geo = df['GEO'].unique()
-    geo = [g for g in geo]
-    # print('GEO:', geo)
+    geo = [g for g in geo if g != 'Canada']
+
+    # reorder GEO with Canada at the front, then the rest by alphabetical
+    new_geo = ['Canada']
+    new_geo.extend(sorted(geo))
+    print('GEO:', new_geo)
 
     # Sectors
     sector = df['Sector'].unique()
@@ -182,7 +186,7 @@ def plotGHGEmissions(request):
     # print('RESET:', new_df.head())
 
     # calculate GRAND TOTAL of all sectors by YEAR + GEO
-    totals_df = new_df.groupby(['date', 'UOM'])[geo].apply(lambda x: x.astype(int).sum())
+    totals_df = new_df.groupby(['date', 'UOM'])[new_geo].apply(lambda x: x.astype(int).sum())
     totals_df['Sector'] = 'GRAND TOTAL'
     totals_df.reset_index(inplace=True)
     # print('AGGREGATE:', totals_df.head())
@@ -190,7 +194,7 @@ def plotGHGEmissions(request):
     # concat back to the new_df and sort by year and sector again
     new_df = pd.concat([new_df, totals_df])
     new_df = new_df.sort_values(by=['date', 'Sector'])
-    print('With Grand Total:', new_df.head())
+    # print('With Grand Total:', new_df.head())
 
     # write to json
     reshape_df = new_df.to_json(orient='records')
@@ -203,7 +207,7 @@ def plotGHGEmissions(request):
 
     context = {
         'data': reshape_df,
-        'geo': geo,
+        'geo': new_geo,
         'sector': json.dumps(sector)
     }
 

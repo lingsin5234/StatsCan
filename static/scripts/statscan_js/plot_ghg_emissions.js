@@ -19,7 +19,7 @@ StackedBar = function(_parentElement, _svgHeight, _svgWidth, _GEO) {
 StackedBar.prototype.initVis = function() {
     var vis = this;
 
-    vis.margin = {top: 70, right: 210, bottom: 70, left: 70};
+    vis.margin = {top: 70, right: 210, bottom: 70, left: 100};
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
@@ -72,7 +72,8 @@ StackedBar.prototype.initVis = function() {
     vis.legendBox.append("text")
         .attr("text-anchor", "start")
         .attr("font-size", "15px")
-        .style("fill", "#222D8F")
+        .style("fill", "#FFF")
+        //.style("fill", "#222D8F")
         .attr("x", 15).attr("y", 10)
         .text(function(d) { return capitalizeFirstLetter(d); });
 
@@ -139,22 +140,25 @@ StackedBar.prototype.updateVis = function() {
         .attr("transform", "translate(" + (vis.width/2 - vis.margin.left/2) + " " + (vis.height + vis.margin.bottom/4*3) + ")")
         .append("text")
             .attr("font-size", "20px")
-            .style("fill", "#222D8F")
-            .text("Date");
+            .style("fill", "#FFF")
+            //.style("fill", "#222D8F")
+            .text("Year");
     vis.g.append("g")
         .attr("transform", "translate(" + (-vis.margin.left + 15) + " " + vis.height/2 + ")")
         .append("text")
             .attr("transform", "rotate(-90)")
             .attr("font-size", "20px")
-            .style("fill", "#222D8F")
+            .style("fill", "#FFF")
+            //.style("fill", "#222D8F")
             .text(vis.uom);
 
     // Set Title
     vis.g.append("g")
-        .attr("transform", "translate(" + (vis.width/2 - vis.margin.left) + " " + -25 + ")")
+        .attr("transform", "translate(" + (vis.width/4 - vis.margin.left) + " " + -25 + ")")
         .append("text")
             .attr("font-size", "30px")
-            .style("fill", "#222D8F")
+            .style("fill", "#FFF")
+            //.style("fill", "#222D8F")
             .text('Total GreenHouse Gas Emissions By Province')
 
     //stack the data? --> stack per subgroup
