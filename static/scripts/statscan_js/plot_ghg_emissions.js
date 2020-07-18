@@ -198,7 +198,7 @@ StackedBar.prototype.updateVis = function() {
     vis.barChart = vis.g.append("g")
         .attr("class", "bar-chart");
 
-    // select all bars groups
+    /*// select all bars groups
     vis.barGroups = vis.barChart.selectAll("g")
         .data(vis.stackedData, d => d.key)
 
@@ -206,20 +206,12 @@ StackedBar.prototype.updateVis = function() {
     vis.barGroups.exit().remove();
 
     vis.barGroups.enter().append("g")
+        .merge(vis.barGroups)
         .attr("class", "layer")
-        .attr("fill", function(d) { return vis.colour(d.key); });
+        .attr("fill", function(d) { return vis.colour(d.key); });*/
 
-    vis.bars = d3.select(".bar-chart").selectAll("g.layer")
-        .selectAll("rect")
-        //.data(d => d, e => e.data.date);
-        .data(function(d) {
-            //console.log('data', d);
-            return d;
-        },
-        function(e) {
-            //console.log('e.data.date', e.data.date)
-            return e.data.date;
-        })
+    vis.bars = d3.select(".bar-chart").selectAll("rect")
+        .data(vis.stackedData.flat(), d => d.key)
 
     // exit individual bars
     vis.bars.exit().remove();
@@ -227,19 +219,38 @@ StackedBar.prototype.updateVis = function() {
     // vis.barGroups.data(vis.stackedData).exit().remove();
 
     // enter individual bars
-    vis.bars.enter().append("rect")
-        .merge(vis.bars)
+    vis.barEnter = vis.bars.enter().append("rect")
+        .attr("fill", function(d) {
+            for (var key in d.data) {
+                var barHeight = d[1] - d[0];
+                if (d.data[key] == barHeight && key != 'total') {
+                    return vis.colour(key);
+                }
+            }
+        })
         .attr("x", function(d) {
+            console.log(d)
             return vis.x(d.data.date);
         })
         .attr("y", function(d) {
-            return vis.y(d[1]);
+            return vis.height;
         })
-        .attr("height", function(d) {
-            return vis.y(d[0]) - vis.y(d[1]);
-        })
+        .attr("height", 0) /*function(d) {
+            return vis.y(d[0]);
+        })*/
         .attr("width", 20)
         // tooltip
         .on("mouseover", function(d, i) { vis.tooltip.show(d, this); })
         .on("mouseout", function(d, i) { vis.tooltip.hide(d, this); });
+
+    vis.barEnter.merge(vis.bars);
+
+    vis.barEnter.transition().duration(2000)
+        .attr('class', d => d.key)
+        //.attr("fill", d => d.color)
+        .attr("x", d => vis.x(d.data.date))
+        //.attr("width", d => 20)
+        .attr("y", d => vis.y(d[1]))
+        .attr("height", d => vis.y(d[0]) - vis.y(d[1]))
+
 }
