@@ -198,28 +198,44 @@ StackedBar.prototype.updateVis = function() {
     vis.barChart = vis.g.append("g")
         .attr("class", "bar-chart");
 
-    vis.barChart.selectAll("g")
-        .data(vis.stackedData)
-        .enter().append("g")
-            .attr("fill", function(d) { return vis.colour(d.key); })
-            .selectAll("rect")
-            .data(function(d) {
-                //console.log('data', d);
-                return d;
-            })
-            .enter().append("rect")
-                .attr("x", function(d) {
-                    return vis.x(d.data.date);
-                })
-                .attr("y", function(d) {
-                    return vis.y(d[1]);
-                })
-                .attr("height", function(d) {
-                    return vis.y(d[0]) - vis.y(d[1]);
-                })
-                .attr("width", 20)
-                // tooltip
-                .on("mouseover", function(d, i) { vis.tooltip.show(d, this); })
-                .on("mouseout", function(d, i) { vis.tooltip.hide(d, this); });
+    // select all bars groups
+    vis.barGroups = vis.barChart.selectAll("g")
+        .data(vis.stackedData, d => d.key)
 
+    // console.log('REMOVING THIS DATA', vis.barGroups.exit());
+    vis.barGroups.exit().remove();
+
+    vis.barGroups.enter().append("g")
+        .attr("class", "layer")
+        .attr("fill", function(d) { return vis.colour(d.key); });
+
+    vis.bars = vis.g.selectAll("g.layer")
+        .selectAll("rect")
+        //.data(d => d, e => e.data.date);
+        .data(function(d) {
+            console.log('data', d);
+            return d;
+        })
+
+    // exit individual bars
+    vis.bars.exit().remove();
+    // exit all bars groups
+    // vis.barGroups.data(vis.stackedData).exit().remove();
+
+    // enter individual bars
+    vis.bars.enter().append("rect")
+        .merge(vis.bars)
+        .attr("x", function(d) {
+            return vis.x(d.data.date);
+        })
+        .attr("y", function(d) {
+            return vis.y(d[1]);
+        })
+        .attr("height", function(d) {
+            return vis.y(d[0]) - vis.y(d[1]);
+        })
+        .attr("width", 20)
+        // tooltip
+        .on("mouseover", function(d, i) { vis.tooltip.show(d, this); })
+        .on("mouseout", function(d, i) { vis.tooltip.hide(d, this); });
 }

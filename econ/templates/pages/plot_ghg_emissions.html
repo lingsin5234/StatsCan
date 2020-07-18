@@ -50,6 +50,11 @@
         }
 
         stackedBar = new StackedBar("#stacked-bar", 700, 1100, geo);
+
+        // on selection change, run the wrangleData
+        $('#sector-select').change(function() {
+            stackedBar.wrangleData();
+        });
     </script>
 
 {% include 'partials/footer_econ.html' %}
