@@ -194,7 +194,7 @@ def plotGHGEmissions(request):
     # concat back to the new_df and sort by year and sector again
     new_df = pd.concat([new_df, totals_df])
     new_df = new_df.sort_values(by=['date', 'Sector'])
-    print('With Grand Total:', new_df.head())
+    # print('With Grand Total:', new_df.head())
 
     # write to json
     reshape_df = new_df.to_json(orient='records')
@@ -205,10 +205,18 @@ def plotGHGEmissions(request):
     # print(type(sector))
     # print(type(geo))
 
+    # remove the _[*] from the sectors, remove GRAND TOTAL -- added in HTML page
+    # print([s for s in sector if bool(re.search(r'\[.*', s))])
+    # select_sector = [re.sub(r' \[.*', '', s) for s in sector if s != 'GRAND TOTAL']
+    select_sector = sorted([s for s in sector if s != 'GRAND TOTAL'])
+    # print(select_sector)
+    # print(len(select_sector))
+
     context = {
         'data': reshape_df,
         'geo': new_geo,
-        'sector': json.dumps(sector)
+        'sector': json.dumps(sector),
+        'select_sector': select_sector
     }
 
     return render(request, 'pages/plot_ghg_emissions.html', context)

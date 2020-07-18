@@ -1,15 +1,28 @@
 {% include 'partials/header_econ.html' %}
     <div id="my_title" class="d-flex justify-content-center">
-        <h1>Plot GHG Emissions</h1>
+        <h1>Plot of GHG Emissions in Canada</h1>
     </div><br>
 
-    <!--div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center">
         <div class="col-md-2"></div>
         <div class="col-md-4">
-            <label>Dates: <span id="dateLabel1">01/01/1990</span> - <span id="dateLabel2">01/12/2020</span></label>
+            <!--label>Dates: <span id="dateLabel1">01/01/1990</span> - <span id="dateLabel2">01/12/2020</span></label-->
+            <label>Sector</label>
+            <select id="sector-select" class="form-control">
+                <option selected value="GRAND TOTAL">GRAND TOTAL</option>
+                {% for sel in select_sector %}
+                <option value="{{sel}}">{{sel}}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="col-md-6"></div>
-    </div><br-->
+        <div class="col-md-2">
+            <!--div id="slider-div">
+                <label>Year: <span id="year">1800</span></label>
+                <div id="date-slider" class="ui-slider"></div>
+            </div-->
+        </div>
+        <div class="col-md-4"></div>
+    </div><br>
 
     <div class="d-flex justify-content-center">
         <div class="col-md-2"></div>

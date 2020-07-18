@@ -116,8 +116,9 @@ StackedBar.prototype.wrangleData = function() {
     vis.date2 = parseTime($("#dateLabel2").text());
 
     // filter data -- use GRAND TOTAL for now
+    sectorSelected = $('#sector-select').val()
     vis.data = ghgData.filter(function(d) {
-        return d.Sector == 'GRAND TOTAL';
+        return d.Sector == sectorSelected;
     })
 
     // unit of measure
