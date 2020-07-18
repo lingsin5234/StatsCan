@@ -84,16 +84,9 @@ StackedBar.prototype.initVis = function() {
         .html(function(d) {
             // get year, GEO and height (value)
             var thisYear = d.data.date
-            var thisGEO = '';
-            var GEOvalue = 0;
-            for (var key in d.data) {
-                var barHeight = d[1] - d[0];
-                if (d.data[key] == barHeight && key != 'total') {
-                    //console.log('key', key)
-                    thisGEO = key;
-                    GEOvalue = d.data[key];
-                }
-            }
+            var thisGEO = d.key;
+            var GEOvalue = d.data[d.key];
+            var barHeight = d[1] - d[0];
             // formulate content
             var content = "<span style='margin-left: 2.5px;'><b>" + thisGEO + " " + thisYear + "</b></span><br>";
             content +=`
@@ -193,7 +186,13 @@ StackedBar.prototype.updateVis = function() {
     vis.stackedData = d3.stack()
         .keys(vis.keys)
         (vis.data)
-    //console.log('STACK', vis.stackedData);
+
+    //add the key (GEO) back in to the data set too
+    vis.stackedData.forEach((d,i) => {
+        vis.stackedData[i].forEach((D,I) => {
+            vis.stackedData[i][I]['key'] = d.key;
+        })
+    })
 
     vis.barChart = vis.g.append("g")
         .attr("class", "bar-chart");
@@ -221,12 +220,7 @@ StackedBar.prototype.updateVis = function() {
     // enter individual bars
     vis.barEnter = vis.bars.enter().append("rect")
         .attr("fill", function(d) {
-            for (var key in d.data) {
-                var barHeight = d[1] - d[0];
-                if (d.data[key] == barHeight && key != 'total') {
-                    return vis.colour(key);
-                }
-            }
+            return vis.colour(d.key);
         })
         .attr("x", function(d) {
             console.log(d)
