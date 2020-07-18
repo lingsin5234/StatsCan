@@ -209,12 +209,16 @@ StackedBar.prototype.updateVis = function() {
         .attr("class", "layer")
         .attr("fill", function(d) { return vis.colour(d.key); });
 
-    vis.bars = vis.g.selectAll("g.layer")
+    vis.bars = d3.select(".bar-chart").selectAll("g.layer")
         .selectAll("rect")
         //.data(d => d, e => e.data.date);
         .data(function(d) {
-            console.log('data', d);
+            //console.log('data', d);
             return d;
+        },
+        function(e) {
+            //console.log('e.data.date', e.data.date)
+            return e.data.date;
         })
 
     // exit individual bars
