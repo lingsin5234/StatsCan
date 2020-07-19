@@ -163,6 +163,9 @@ def plotGHGEmissions(request):
     df.drop(['SCALAR_ID', 'VALUE'], axis=1, inplace=True)
     # print('CONCAT:', df.head())
 
+    # DROP BALANCING ITEMS FOR NOW
+    df = df[~df['Sector'].str.contains("Balancing item")].copy()
+
     # GEOs
     geo = df['GEO'].unique()
     geo = [g for g in geo if g != 'Canada']
