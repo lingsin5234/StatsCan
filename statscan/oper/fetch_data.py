@@ -56,7 +56,7 @@ def getFullTableDownloadCSV(productId):
 
     # download file:
     try:
-        wget.download(download_url, 'econ/download/' + file_name)
+        wget.download(download_url, 'statscan/download/' + file_name)
         print('\n')
     except Exception as e:
         print('Download Failed:', str(e))
@@ -71,10 +71,10 @@ def getFullTableDownloadCSV(productId):
 def unzip_download(productId):
 
     file_name = str(productId) + '-eng.zip'
-    file_path = 'econ/download/' + file_name
+    file_path = 'statscan/download/' + file_name
     try:
         with ZipFile(file_path, 'r') as zipObj:
-            zipObj.extractall('econ/data')
+            zipObj.extractall('statscan/data')
     except Exception as e:
         print('Unzip Failed:', str(e))
         return False
@@ -88,7 +88,7 @@ def unzip_download(productId):
 def multi_product_fetch(file_name):
 
     # get list of product ids
-    file_path = 'econ/import/' + file_name
+    file_path = 'statscan/import/' + file_name
     df = pd.read_csv(file_path, sep=';')
     productId = list(df['productId'])
 

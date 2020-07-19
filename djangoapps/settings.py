@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # apps
-    'econ'
+    'statscan'
 ]
 
 MIDDLEWARE = [
@@ -82,17 +82,17 @@ WSGI_APPLICATION = 'djangoapps.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 # DATABASE ROUTERS
-DATABASE_ROUTERS = ['econ.routers.ECONRouter']
-DATABASE_APPS_MAPPING = {'econ': 'econ_db'}
+DATABASE_ROUTERS = ['statscan.routers.STATSCANRouter']
+DATABASE_APPS_MAPPING = {'statscan': 'statscan_db'}
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
-    'econ_db': {
+    'statscan_db': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'econ.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'statscan.sqlite3'),
     }
 }
 

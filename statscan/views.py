@@ -5,10 +5,10 @@ from rest_framework.response import Response
 import json
 import re
 import pandas as pd
-from econ.models import Cubes
-from econ.oper import fetch_data as fd
-from econ.serializers import CubeSerializer
-from econ.oper import shape_data as sd
+from statscan.models import Cubes
+from statscan.oper import fetch_data as fd
+from statscan.serializers import CubeSerializer
+from statscan.oper import shape_data as sd
 
 
 # project page

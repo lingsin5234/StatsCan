@@ -4,10 +4,10 @@
 *import*
 **/data/**
 *download*
-*admin*
+**/admin/**
 *fonts*
 *img*
 style.css
-econ/.git
-econ/.git/*
-econ/.gitignore
+**/statscan/.git
+**/statscan/.git/**
+**/statscan/.gitignore

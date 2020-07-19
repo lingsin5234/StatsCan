@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from econ.models import Cubes
+from statscan.models import Cubes
 
 
 # list Cubes

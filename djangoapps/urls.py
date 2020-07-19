@@ -16,14 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 
-from econ import views as econ_vw
+from statscan import views as statscan_vw
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^$', econ_vw.project_markdown),
-    re_path(r'^runJob', econ_vw.run_oper),
-    re_path(r'^listCubes', econ_vw.listCubes),
-    re_path(r'api/list_cubes', econ_vw.CubesAPI.as_view(), name='api_list_cubes'),
-    re_path(r'plot/milk_products', econ_vw.plotMilkProducts),
-    re_path(r'plot/ghg_emissions', econ_vw.plotGHGEmissions),
+    re_path(r'^$', statscan_vw.project_markdown),
+    re_path(r'^runJob', statscan_vw.run_oper),
+    re_path(r'^listCubes', statscan_vw.listCubes),
+    re_path(r'api/list_cubes', statscan_vw.CubesAPI.as_view(), name='api_list_cubes'),
+    re_path(r'plot/milk_products', statscan_vw.plotMilkProducts),
+    re_path(r'plot/ghg_emissions', statscan_vw.plotGHGEmissions),
 ]

@@ -7,7 +7,7 @@ def shapeProduct(productId):
 
     # read CSV
     file_name = str(productId) + '.csv'
-    file_path = 'econ/data/' + file_name
+    file_path = 'statscan/data/' + file_name
     full_df = pd.read_csv(file_path)
 
     # let's explore the grand total first
