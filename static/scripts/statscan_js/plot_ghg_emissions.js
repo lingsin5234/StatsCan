@@ -130,7 +130,7 @@ StackedBar.prototype.wrangleData = function() {
         }
         if (vis.keys.length >= 14) { break; }
     }
-    console.log('GEOs', vis.keys);
+    //console.log('GEOs', vis.keys);
     vis.data.forEach(function(d){
         d.total = 0;
         vis.keys.forEach(function(k){
@@ -162,17 +162,23 @@ StackedBar.prototype.updateVis = function() {
     vis.xAxis.selectAll("text").attr("font-size", "15px");
     vis.yAxis.selectAll("text").attr("font-size", "15px");
 
+    // Remove all existing Axes names
+    vis.g.selectAll(".axis-text").remove();
+
     // Set Axes Names
     vis.g.append("g")
         .attr("transform", "translate(" + (vis.width/2 - vis.margin.left/2) + " " + (vis.height + vis.margin.bottom/4*3) + ")")
         .append("text")
+            .attr("class", "axis-text x-axis")
             .attr("font-size", "20px")
             //.style("fill", "#FFF")
             .style("fill", "#222D8F")
             .text("Year");
     vis.g.append("g")
+        .attr("class", "axis-text y-axis")
         .attr("transform", "translate(" + (-vis.margin.left + 15) + " " + vis.height/2 + ")")
         .append("text")
+            .attr("class", "axis x-axis")
             .attr("transform", "rotate(-90)")
             .attr("font-size", "20px")
             //.style("fill", "#FFF")
@@ -183,6 +189,7 @@ StackedBar.prototype.updateVis = function() {
     vis.g.append("g")
         .attr("transform", "translate(" + (vis.width/4 - vis.margin.left) + " " + -25 + ")")
         .append("text")
+            .attr("class", "axis-text title")
             .attr("font-size", "30px")
             //.style("fill", "#FFF")
             .style("fill", "#222D8F")
@@ -192,7 +199,21 @@ StackedBar.prototype.updateVis = function() {
     vis.stackedData = d3.stack()
         .keys(vis.keys)
         (vis.data)
-    console.log(vis.stackedData);
+    //console.log(vis.stackedData);
+
+    // if no data
+    if (vis.stackedData.length == 0) {
+        vis.g.append("g")
+            .attr("transform", "translate(" + (vis.width/2 - vis.margin.left) + " " + vis.height/2 + ")")
+            .append("text")
+                .attr("class", "no-data")
+                .attr("font-size", "30px")
+                //.style("fill", "#FFF")
+                .style("fill", "#222D8F")
+                .text('NO DATA');
+    } else {
+        vis.g.selectAll(".no-data").remove();
+    }
 
     //add the key (GEO) back in to the data set too
     vis.stackedData.forEach((d,i) => {
