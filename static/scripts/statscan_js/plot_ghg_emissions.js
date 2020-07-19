@@ -19,7 +19,7 @@ StackedBar = function(_parentElement, _svgHeight, _svgWidth, _GEO) {
 StackedBar.prototype.initVis = function() {
     var vis = this;
 
-    vis.margin = {top: 70, right: 270, bottom: 70, left: 100};
+    vis.margin = {top: 70, right: 250, bottom: 70, left: 150};
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
@@ -51,6 +51,15 @@ StackedBar.prototype.initVis = function() {
     vis.yAxis = vis.g.append('g')
         .attr('class', 'y axis')
         .attr('transform', 'translate(0 0)');
+
+    // Set unchanged Title
+    vis.g.append("g")
+        .attr("transform", "translate(" + (vis.width/2) + " -50)")
+        .append("text")
+            .attr("font-size", "30px")
+            .style("text-anchor", "middle")
+            .style("fill", "#222D8F")
+            .text('Greenhouse Gas Emissions By Province');
 
     // Add Legend
     vis.legendGroup = vis.svg.append("g")
@@ -167,7 +176,7 @@ StackedBar.prototype.updateVis = function() {
 
     // Set Axes Names
     vis.g.append("g")
-        .attr("transform", "translate(" + (vis.width/2 - vis.margin.left/2) + " " + (vis.height + vis.margin.bottom/4*3) + ")")
+        .attr("transform", "translate(" + (vis.width/2 - vis.margin.left/4) + " " + (vis.height + vis.margin.bottom/4*3) + ")")
         .append("text")
             .attr("class", "axis-text x-axis")
             .attr("font-size", "20px")
@@ -176,7 +185,7 @@ StackedBar.prototype.updateVis = function() {
             .text("Year");
     vis.g.append("g")
         .attr("class", "axis-text y-axis")
-        .attr("transform", "translate(" + (-vis.margin.left + 15) + " " + vis.height/2 + ")")
+        .attr("transform", "translate(" + (-vis.margin.left + 60) + " " + vis.height/2 + ")")
         .append("text")
             .attr("class", "axis x-axis")
             .attr("transform", "rotate(-90)")
@@ -185,15 +194,18 @@ StackedBar.prototype.updateVis = function() {
             .style("fill", "#222D8F")
             .text(vis.uom);
 
-    // Set Title
+    // Set Title of Sector
     vis.g.append("g")
-        .attr("transform", "translate(" + (vis.width/4 - vis.margin.left) + " " + -25 + ")")
+        .attr("transform", "translate(" + (vis.width/2) + " " + -20 + ")")
         .append("text")
             .attr("class", "axis-text title")
-            .attr("font-size", "30px")
+            .attr("font-size", "25px")
+            .style("text-anchor", "middle")
             //.style("fill", "#FFF")
             .style("fill", "#222D8F")
-            .text('Total GreenHouse Gas Emissions By Province')
+            .text(function(d) {
+                return sectorSelected;
+            })
 
     //stack the data? --> stack per subgroup
     vis.stackedData = d3.stack()
@@ -204,10 +216,11 @@ StackedBar.prototype.updateVis = function() {
     // if no data
     if (vis.stackedData.length == 0) {
         vis.g.append("g")
-            .attr("transform", "translate(" + (vis.width/2 - vis.margin.left) + " " + vis.height/2 + ")")
+            .attr("transform", "translate(" + (vis.width/2) + " " + vis.height/2 + ")")
             .append("text")
                 .attr("class", "no-data")
                 .attr("font-size", "30px")
+                .style("text-anchor", "middle")
                 //.style("fill", "#FFF")
                 .style("fill", "#222D8F")
                 .text('NO DATA');

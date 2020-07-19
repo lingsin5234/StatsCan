@@ -30,6 +30,20 @@
         <div class="col-md-2"></div>
     </div>
 
+    <div class="d-flex justify-content-center">
+        <div class="col-md-2"></div>
+        <div class="col-md-8" style="text-indent: 20px; text-align: justify;">
+            <text>According to this Greenhouse Gas Emissions dataset, the data dated 2008 and before is available
+            only for the country as a whole. Whereas data dated 2009 and after is available by province. Thus,
+            for a large portion of the sectors in the dropdown, there are duplicated sector names. The ones with
+            a [<strong>sector_id</strong>] in square brackets indicate data for 2009 and after. The sector id
+            corresponds to the IDs that are listed under the
+                <a href="https://www.statcan.gc.ca/eng/concepts/index?MM=">Definitions, data sources, and methods</a>
+                 page from Statistics Canada.
+            </text>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
 
     {% load static %}
     <script src="{% static 'scripts/statscan_js/plot_ghg_emissions.js' %}"></script>
