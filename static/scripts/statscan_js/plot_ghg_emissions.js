@@ -118,13 +118,19 @@ StackedBar.prototype.wrangleData = function() {
     vis.uom = vis.data[0]['UOM']
     //console.log(vis.uom);
 
-    // fix pre-processing
+    // grab all keys: non-zero GEOs
     vis.keys = [];
-    for (key in vis.data[0]){
-        if (!['date', 'UOM', 'Sector'].includes(key))
-        vis.keys.push(key);
+    for (row in vis.data) {
+        //console.log(vis.data[row]);
+        for (key in vis.data[row]) {
+            // skip date, UOM, sector; skip zeros; skip keys (GEOs) that have already been added.
+            if (!['date', 'UOM', 'Sector', 'total'].includes(key) && vis.data[row][key] != 0 && !vis.keys.includes(key)) {
+                vis.keys.push(key);
+            }
+        }
+        if (vis.keys.length >= 14) { break; }
     }
-    //console.log('GEOs', vis.keys);
+    console.log('GEOs', vis.keys);
     vis.data.forEach(function(d){
         d.total = 0;
         vis.keys.forEach(function(k){
@@ -186,6 +192,7 @@ StackedBar.prototype.updateVis = function() {
     vis.stackedData = d3.stack()
         .keys(vis.keys)
         (vis.data)
+    console.log(vis.stackedData);
 
     //add the key (GEO) back in to the data set too
     vis.stackedData.forEach((d,i) => {
@@ -197,54 +204,43 @@ StackedBar.prototype.updateVis = function() {
     vis.barChart = vis.g.append("g")
         .attr("class", "bar-chart");
 
-    /*// select all bars groups
-    vis.barGroups = vis.barChart.selectAll("g")
-        .data(vis.stackedData, d => d.key)
+    // remove ALL bars
+    d3.select(".bar-chart").selectAll(".bar").remove()
 
-    // console.log('REMOVING THIS DATA', vis.barGroups.exit());
-    vis.barGroups.exit().remove();
-
-    vis.barGroups.enter().append("g")
-        .merge(vis.barGroups)
-        .attr("class", "layer")
-        .attr("fill", function(d) { return vis.colour(d.key); });*/
-
-    vis.bars = d3.select(".bar-chart").selectAll("rect")
+    vis.bars = d3.select(".bar-chart").selectAll(".bar")
         .data(vis.stackedData.flat(), d => d.key)
 
     // exit individual bars
-    vis.bars.exit().remove();
-    // exit all bars groups
-    // vis.barGroups.data(vis.stackedData).exit().remove();
+    //vis.bars.exit().remove();
 
     // enter individual bars
-    vis.barEnter = vis.bars.enter().append("rect")
-        .attr("fill", function(d) {
-            return vis.colour(d.key);
-        })
-        .attr("x", function(d) {
-            console.log(d)
-            return vis.x(d.data.date);
-        })
-        .attr("y", function(d) {
-            return vis.height;
-        })
-        .attr("height", 0) /*function(d) {
-            return vis.y(d[0]);
-        })*/
-        .attr("width", 20)
-        // tooltip
-        .on("mouseover", function(d, i) { vis.tooltip.show(d, this); })
-        .on("mouseout", function(d, i) { vis.tooltip.hide(d, this); });
+    vis.barEnter = vis.bars.enter().append("g")
+        .attr("class", "bar")
+        .append("rect")
+            .attr("fill", function(d) {
+                return vis.colour(d.key);
+            })
+            .attr("x", function(d) {
+                return vis.x(d.data.date);
+            })
+            .attr("y", function(d) {
+                return vis.height;
+            })
+            .attr("height", 0) /*function(d) {
+                return vis.y(d[0]);
+            })*/
+            .attr("width", 20)
+            // tooltip
+            .on("mouseover", function(d, i) { vis.tooltip.show(d, this); })
+            .on("mouseout", function(d, i) { vis.tooltip.hide(d, this); });
 
     vis.barEnter.merge(vis.bars);
 
-    vis.barEnter.transition().duration(2000)
-        .attr('class', d => d.key)
-        //.attr("fill", d => d.color)
+    vis.barEnter.transition().duration(1000)
+        //.attr('class', d => d.key)
+        .attr("fill", d => vis.colour(d.key))
         .attr("x", d => vis.x(d.data.date))
         //.attr("width", d => 20)
         .attr("y", d => vis.y(d[1]))
         .attr("height", d => vis.y(d[0]) - vis.y(d[1]))
-
 }
