@@ -1,0 +1,26 @@
+{% include 'partials/header_econ.html' %}
+    <div id="my_title" class="d-flex justify-content-center">
+        <h1>List Cubes</h1>
+    </div><br>
+
+    <div id="listCubes" class="d-flex justify-content-center"></div>
+    <br>
+
+    <script>
+        function getCubesList() {
+            getURL = "/api/list_cubes?keyword=greenhouse";
+            console.log(getURL);
+
+            $.ajax({
+                //async: true,
+                url: getURL,
+                success: function (data) {  // `data` is the return of the `load_teams` view function
+                    //console.log(data);
+                    $("#listCubes").html(data);  // replace with the values retrieved
+                }
+            });
+        };
+        getCubesList();
+    </script>
+
+{% include 'partials/footer_econ.html' %}

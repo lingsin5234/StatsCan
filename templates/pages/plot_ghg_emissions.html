@@ -1,0 +1,74 @@
+{% include 'partials/header_econ.html' %}
+    <div id="my_title" class="d-flex justify-content-center">
+        <h1>Plot of GHG Emissions in Canada</h1>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <!--label>Dates: <span id="dateLabel1">01/01/1990</span> - <span id="dateLabel2">01/12/2020</span></label-->
+            <label>Sector</label>
+            <select id="sector-select" class="form-control">
+                <option selected value="GRAND TOTAL">GRAND TOTAL</option>
+                {% for sel in select_sector %}
+                <option value="{{sel}}">{{sel}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <!--div id="slider-div">
+                <label>Year: <span id="year">1800</span></label>
+                <div id="date-slider" class="ui-slider"></div>
+            </div-->
+        </div>
+        <div class="col-md-4"></div>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="col-md-2"></div>
+        <div id="stacked-bar" class="col-md-8"></div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <div class="col-md-2"></div>
+        <div class="col-md-8" style="text-indent: 20px; text-align: justify;">
+            <text>According to this Greenhouse Gas Emissions dataset, the data dated 2008 and before is available
+            only for the country as a whole. Whereas data dated 2009 and after is available by province. Thus,
+            for a large portion of the sectors in the dropdown, there are duplicated sector names. The ones with
+            a [<strong>sector_id</strong>] in square brackets indicate data for 2009 and after. The sector id
+            corresponds to the IDs that are listed under the
+                <a href="https://www.statcan.gc.ca/eng/concepts/index?MM=">Definitions, data sources, and methods</a>
+                 page from Statistics Canada.
+            </text>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    {% load static %}
+    <script src="{% static 'scripts/statscan_js/plot_ghg_emissions.js' %}"></script>
+    <script>
+        //var ghgData1990 = {{ data1990 | safe }};
+        //var ghgData2009 = {{ data2009 | safe }};
+        var ghgData = {{ data | safe }};
+        var sector = {{ sector | safe }};
+        var geo = {{ geo | safe }};
+        var parseTime = d3.timeParse("%d/%m/%Y");
+        var formatTime = d3.timeFormat("%d/%m/%Y");
+        var transTime = function(){ return d3.transition().duration(100); }
+        var stackedBar;
+
+        // capitalize First Letter
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        stackedBar = new StackedBar("#stacked-bar", 700, 1100, geo);
+
+        // on selection change, run the wrangleData
+        $('#sector-select').change(function() {
+            stackedBar.wrangleData();
+        });
+    </script>
+
+{% include 'partials/footer_econ.html' %}
