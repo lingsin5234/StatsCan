@@ -1,0 +1,43 @@
+{% include 'partials/header_econ.html' %}
+    <div id="my_title" class="d-flex justify-content-center">
+        <h1>List Cubes</h1>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+            <label>Dates: <span id="dateLabel1">01/01/2000</span> - <span id="dateLabel2">01/12/2020</span></label>
+        </div>
+        <div class="col-md-6"></div>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="col-md-2"></div>
+        <div id="stacked-bar" class="col-md-8"></div>
+        <div class="col-md-2"></div>
+    </div>
+
+
+    {% load static %}
+    <script src="{% static 'scripts/statscan_js/plot_milk_products.js' %}"></script>
+    <script>
+        var commData = {{ data | safe }};
+        var commodities = {{ commodities | safe }};
+        var geo = {{ geo | safe }};
+        var parseTime = d3.timeParse("%d/%m/%Y");
+        var formatTime = d3.timeFormat("%d/%m/%Y");
+        var transTime = function(){ return d3.transition().duration(100); }
+        var stackedBar;
+
+        var selectedCommodity = 'Creamery butter';
+        var selectedData2 = JSON.parse(commData[selectedCommodity]);
+
+        // capitalize First Letter
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        stackedBar = new StackedBar("#stacked-bar", 700, 1000, geo);
+    </script>
+
+{% include 'partials/footer_econ.html' %}

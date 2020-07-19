@@ -1,0 +1,12 @@
+*.idea*
+*__pycache__*
+*.sqlite3
+*import*
+*data*
+*download*
+*admin*
+*fonts*
+*img*
+style.css
+econ/.git
+econ/.git/*
