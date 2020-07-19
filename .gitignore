@@ -2,7 +2,7 @@
 *__pycache__*
 *.sqlite3
 *import*
-*data*
+**/data/**
 *download*
 *admin*
 *fonts*
