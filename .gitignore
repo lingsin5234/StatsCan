@@ -2,9 +2,12 @@
 *__pycache__*
 *.sqlite3
 *import*
-*data*
+**/data/**
 *download*
 *admin*
 *fonts*
 *img*
 style.css
+econ/.git
+econ/.git/*
+econ/.gitignore
