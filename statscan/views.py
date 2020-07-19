@@ -15,7 +15,7 @@ from statscan.oper import shape_data as sd
 def project_markdown(request):
 
     page_height = 1050
-    f = open('econ/README.md', 'r')
+    f = open('statscan/README.md', 'r')
     if f.mode == 'r':
         readme = f.read()
         page_height = len(readme)/2 + 200
@@ -25,7 +25,7 @@ def project_markdown(request):
         'page_height': page_height
     }
 
-    template_page = get_this_template('econ', 'project.html')
+    template_page = get_this_template('statscan', 'project.html')
 
     return render(request, template_page, content)
 
